@@ -1,0 +1,6 @@
+curl -X POST -d @../../rest-api/family/AWH_BEL_EBB_Aufbauleuchte_Rechteck_Decke.json http://localhost:3000/families/import
+
+curl -v -H "Content-Type: application/json" -X POST -d "@" -H "Connection: close" http://localhost:3000/families/import.json
+
+
+curl -v -H 'Content-Type: application/json' -X POST -d '@' -H 'Connection: close' http://localhost:3000/families/import.json

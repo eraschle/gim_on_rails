@@ -1,0 +1,14 @@
+Neo4j-Browser
+--------
+MATCH (n)
+OPTIONAL MATCH (n)-[r]-()
+DELETE n,r
+
+Os > remove data from drisk
+------
+sudo service neo4j stop
+cd /val/lib/neo4j
+sudo rm -rf data/*
+sudo mkdir data
+cd ~
+sudo service neo4j start
