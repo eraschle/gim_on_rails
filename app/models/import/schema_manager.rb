@@ -26,7 +26,7 @@ class SchemaManager
   end
 
   def create_builder(model_symbol)
-    ImportBuilder.new model_symbol, @root
+    ImportEntityBuilder.new model_symbol, @root
   end
 
   def apply_schema_configuration
