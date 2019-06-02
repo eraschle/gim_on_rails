@@ -1,3 +1,3 @@
-class ImportWarehouse
+class ImportModelBuilder
 
 end
