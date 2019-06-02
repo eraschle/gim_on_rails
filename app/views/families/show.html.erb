@@ -1,0 +1,70 @@
+<p id="notice"><%= notice %></p>
+
+<div class='row'>
+    <div id="main_canvas_container" class="embed-responsive col m-3 shadow-lg" style="height: 300px">
+        <%= javascript_include_tag "show_view.min" %>
+    </div>
+    <div class="col m-3 p-3">
+        <table class="table table-sm table-striped">
+            <caption>Common informations</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">Wert</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Name:</th>
+                    <td><%= @family.name %></td>
+                </tr>
+                <tr>
+                    <th scope="row">Category:</th>
+                    <td><%= @family.category.name %></td>
+                </tr>
+                <tr>
+                    <th scope="row">Unique:</th>
+                    <td><%= @family.unique_id %></td>
+                </tr>
+                <tr>
+                    <th scope="row">Workplane based:</th>
+                    <td><%= @family.workplane_based %></td>
+                </tr>
+                <tr>
+                    <th scope="row">Room calculation point:</th>
+                    <td><%= @family.room_calculation_point %></td>
+                </tr>
+                <tr>
+                    <th scope="row">Shared:</th>
+                    <td><%= @family.shared %></td>
+                </tr>
+                <tr>
+                    <th scope="row">Always vertical:</th>
+                    <td><%= @family.always_vertical %></td>
+                </tr>
+                <tr>
+                    <th scope="row">Round dimension:</th>
+                    <td><%= @family.round_dimension %></td>
+                </tr>
+                <tr>
+                    <th scope="row">Fitting type:</th>
+                    <td><%= @family.fitting_type %></td>
+                </tr>
+                <tr>
+                    <th scope="row">Created:</th>
+                    <td><%= created_at(@family) %></td>
+                </tr>
+                <tr>
+                    <th scope="row">Updated:</th>
+                    <td><%= updated_at(@family) %></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class='row'>
+    <div>
+        <%= link_to 'Edit', edit_family_path(@family) %> |
+        <%= link_to 'Back', families_path %>
+    </div>
+</div>

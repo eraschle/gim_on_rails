@@ -1,0 +1,40 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Families</h1>
+
+<table class='table table-sm table-striped'>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Workplane based</th>
+      <th>Room calculation point</th>
+      <th>Shared</th>
+      <th>Always vertical</th>
+      <th>Round dimension</th>
+      <th>Fitting type</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% count = 0 %>
+    <% @families.each do |family| %>
+      <tr>
+        <td><%= ++count %></td>
+        <td><%= family.name %></td>
+        <td><%= family.workplane_based %></td>
+        <td><%= family.room_calculation_point %></td>
+        <td><%= family.shared %></td>
+        <td><%= family.always_vertical %></td>
+        <td><%= family.round_dimension %></td>
+        <td><%= family.fitting_type %></td>
+        <td><%= link_to 'Show', family %></td>
+        <td><%= link_to 'Edit', edit_family_path(family) %></td>
+        <td><%= link_to 'Destroy', family, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'New Family', new_family_path %>

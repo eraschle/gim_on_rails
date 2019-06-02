@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  unique_id: MyString
+  workplane_based: false
+  room_calculation_point: false
+  shared: false
+  always_vertical: false
+  round_dimension: MyString
+  fitting_type: MyString
+
+two:
+  name: MyString
+  unique_id: MyString
+  workplane_based: false
+  room_calculation_point: false
+  shared: false
+  always_vertical: false
+  round_dimension: MyString
+  fitting_type: MyString
