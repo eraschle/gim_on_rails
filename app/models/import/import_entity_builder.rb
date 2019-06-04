@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ImportEntityBuilder
   def initialize(model_symbol, entity)
     @model_symbol = model_symbol
