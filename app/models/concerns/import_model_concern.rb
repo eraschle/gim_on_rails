@@ -37,7 +37,6 @@ module ImportModelConcern
       model_param = model_config.to_model import_search
 
       found_models = where(model_param => search_value)
-      p "#Found: #{found_models}"
       found_models.count == 1 ? found_models.first : nil
     end
 
