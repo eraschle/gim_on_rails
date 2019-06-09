@@ -9,10 +9,6 @@ class ModelBuilderFactory
     create @main_model
   end
 
-  def reset_all
-    @builders.clear
-  end
-
   def reset(model_symbol)
     model_symbol = to_symbol model_symbol
     @builders.delete model_symbol
@@ -42,10 +38,6 @@ class ModelBuilderFactory
 
   def main_builder
     @builders[@main_model]
-  end
-
-  def all_created
-    @builders.values
   end
 
   def created?(model_symbol)

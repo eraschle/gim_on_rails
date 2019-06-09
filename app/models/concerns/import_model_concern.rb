@@ -46,16 +46,6 @@ module ImportModelConcern
       association_targets.include? model_symbol
     end
 
-    # def relationship_target(relationship)
-    #   relationship = relationship.name.to_sym if relationship.is_a? Class
-    #   associations.each_value do |association|
-    #     association_relation_symbol = association.relationship_class.name.to_sym
-    #     next unless relationship == association_relation_symbol
-
-    #     return target_symbol association
-    #   end
-    # end
-
     def association_targets
       return [] unless associations?
 

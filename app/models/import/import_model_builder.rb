@@ -40,12 +40,6 @@ class ImportModelBuilder
     @instance.import params
   end
 
-  def associated?(other)
-    return false if other.model_relation?
-
-    @model_class.association_with_target? other.model_symbol
-  end
-
   def create_associations(factory)
     @model_class.association_targets.each do |target|
       next unless factory.created? target
@@ -55,34 +49,19 @@ class ImportModelBuilder
     end
   end
 
-  def create_relation_associations(factory)
-    not_model_node?
-    from_builder = factory.builder @model_class.start_class
-    to_builder = factory.builder @model_class.end_class
-    create_relationship from_builder, to_builder
-  end
-
   def create_relationship(from_builder, to_builder)
-    not_model_node?
+    raise "IS NOT a relationship builder #{model_symbol}" if model_node?
     return if relation_nodes_set?
 
     @instance.from_node = from_builder.current
     @instance.to_node = to_builder.current
-    # @instance.save
     @relationship_connected = true
-  end
-
-  def relation_nodes_set?
-    model_node? ||
-      @relationship_connected
-      # @instance.from_node.set? &&
-      # @instance.to_node.set?
   end
 
   private
 
-  def not_model_node?
-    raise "IS NOT a relationship builder #{model_symbol}" if model_node?
+  def relation_nodes_set?
+    model_node? || @relationship_connected
   end
 
   def create_relationship_association(target_builder, factory)

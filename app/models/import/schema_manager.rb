@@ -9,18 +9,6 @@ class SchemaManager
     @root = create_entity schema
   end
 
-  def create_entity(schema, name = :no_name)
-    entity = SchemaEntity.new name
-    schema.each do |param, definition|
-      if parameter? definition
-        add_parameter entity, param, definition
-      elsif reference? definition
-        add_reference entity, param, definition
-      end
-    end
-    entity
-  end
-
   def permit_parameters(params, rest_parameter)
     generator = PermitParamGenerator.new
     permit_parameters = generator.permit_params @root
@@ -38,12 +26,24 @@ class SchemaManager
 
   private
 
+  def create_entity(schema, name = :no_name)
+    entity = SchemaEntity.new name
+    schema.each do |param, definition|
+      if parameter? definition
+        add_parameter entity, param, definition
+      else if reference? definition
+        add_reference entity, param, definition
+      else
+        raise "import parameter '#{param}' is neither a parameter or reference #{definition}"
+      end
+    end
+    entity
+  end
+
   def parameter?(definition)
     definition.is_a? Array
   end
 
-  # add the mapping of import parameter
-  # to a model and one of its parameter
   def add_parameter(entity, parameter, definition)
     entity.add_parameter parameter, definition
     entity.add_options parameter, definition
