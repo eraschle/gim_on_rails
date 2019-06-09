@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-require './app/models/import/import_config'
+require './app/models/import/import_model_config'
 
 class SchemaEntity
-  attr_reader :name, :parameters, :one_references, :many_references
+  attr_reader :name, :one_references, :many_references
 
-  def initialize(name = :no_name)
-    name = :no_name if name.blank?
+  def initialize(name)
     @name = name
     @model_configs = {}
     @one_references = {}
@@ -15,6 +14,10 @@ class SchemaEntity
 
   def name?
     @name != :no_name
+  end
+
+  def parameters
+    @model_configs.each_value.collect(&:import_parameters)
   end
 
   def add_parameter(import_param, definition)
@@ -33,7 +36,7 @@ class SchemaEntity
 
   def add_options(import_param, definition)
     options = model_parameter_options definition
-    return unless options.keys.empty?
+    return if options.keys.empty?
 
     add_search_parameter_options import_param, definition
   end
@@ -44,21 +47,31 @@ class SchemaEntity
     setup_many_relation_configurations
   end
 
+  def managed_models
+    @model_configs.keys
+  end
+
+  def import_references
+    references = @one_references.values
+    references.concat @many_references.values
+    references
+  end
+
   private
 
   def setup_model_configurations
-    models.each do |model_symbol|
+    managed_models.each do |model_symbol|
       model_class = Object.const_get model_symbol
       model_class.setup config_of model_symbol
     end
   end
 
-  def setup_one_relation_configuration
-    @one_reference.each_value(&:apply_model_configuration)
+  def setup_one_relation_configurations
+    @one_references.each_value(&:apply_model_configuration)
   end
 
-  def setup_many_relation_configuration
-    @many_reference.each_value(&:apply_model_configuration)
+  def setup_many_relation_configurations
+    @many_references.each_value(&:apply_model_configuration)
   end
 
   def config?(model_symbol)

@@ -20,30 +20,67 @@ module ImportModelConcern
   end
 
   module ClassMethods
-    def setup(config)
-      @model_config = config
-    end
-
-    def find_or_create(params)
-      found_model = find_by params
-      found_model.nil? ? new : found_model
-    end
-
-    private
-
     def model_config
       @model_config
     end
 
-    def find_by(params)
-      return nil unless @model_config.search_parameter?
+    def setup(config)
+      @model_config = config
+    end
 
-      import_search = @model_config.search_parameter
+    def find_import(params)
+      return nil unless model_config.search_parameter?
+
+      import_search = model_config.search_parameter
       search_value = params[import_search]
-      model_param = @model_config.to_model import_search
 
-      found_models = where(model_param == search_value)
+      model_param = model_config.to_model import_search
+
+      found_models = where(model_param => search_value)
+      p "#Found: #{found_models}"
       found_models.count == 1 ? found_models.first : nil
+    end
+
+    def association_with_target?(model_symbol)
+      return false unless associations?
+
+      association_targets.include? model_symbol
+    end
+
+    # def relationship_target(relationship)
+    #   relationship = relationship.name.to_sym if relationship.is_a? Class
+    #   associations.each_value do |association|
+    #     association_relation_symbol = association.relationship_class.name.to_sym
+    #     next unless relationship == association_relation_symbol
+
+    #     return target_symbol association
+    #   end
+    # end
+
+    def association_targets
+      return [] unless associations?
+
+      associations.each_value.collect { |asso| target_symbol asso }
+    end
+
+    def association_with_target(model_symbol)
+      return nil unless association_with_target? model_symbol
+
+      associations.each_value do |association|
+        next unless model_symbol == target_symbol(association)
+
+        return association
+      end
+    end
+
+    private
+
+    def target_symbol(association)
+      association.target_class.name.to_sym
+    end
+
+    def associations?
+      respond_to? :associations
     end
   end
 end

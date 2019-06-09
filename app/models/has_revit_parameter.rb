@@ -10,6 +10,7 @@ class HasRevitParameter
   property :revit, type: Boolean
   property :shared, type: Boolean
   property :built_in_parameter, type: String
+  creates_unique
 
   def family_parameter?
     @family

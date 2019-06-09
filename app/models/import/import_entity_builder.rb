@@ -1,60 +1,106 @@
 # frozen_string_literal: true
 
 class ImportEntityBuilder
-  def initialize(model_symbol, entity)
-    @model_symbol = model_symbol
+  def initialize(entity, factory)
+    @factory = factory
     @entity = entity
-    raise "'#{@model_symbol}' is not managed by '#{@entity.class.name}'"
   end
 
-  def instance
-    @instance ||= model_class.new
-  end
-
-  # import params values and returns true if all goof.
-  # return false if some errors occurs during import.
   def import(params)
-    # model parameter of model is mapped
-    instance = import_model params
-    others = import_other_models params
+    params = entity_params params
+    import_entity_models params
+    create_associations
+    import_entity_one_relations params
+    import_entity_many_relations params
+  end
 
-    # import schema entity references
-    one_references = import_one_references params
-    many_references = import_many_references params
+  def save
+    node_model_builders.each { |builder| builder.save errors }
+    relation_model_builders.each { |builder| builder.save errors }
+  end
+
+  def clear
+    @entity.managed_models.each { |model| @factory.reset model }
+  end
+
+  def model_builders
+    @factory.builders @entity.managed_models
+  end
+
+  def model
+    @factory.main_builder.current
   end
 
   # return all import errors
   def errors
-    @errors ||= []
+    @errors ||= {}
   end
 
-  # returns imported and merged model
-  def model
-    instance
+  def create_associations
+    node_model_builders.each do |builder|
+      builder.create_associations @factory
+    end
   end
 
   private
 
-  def other_models(source)
-    @entity.models.reject { |model| model == source }
-  end
-
-  def import_model(params)
-    import_model_data params, @model_symbol
-  end
-
-  def import_other_models(params)
-    other_models = other_models @model_symbol
-    other_models.each do |model|
-      other_instance = import_model_data params, model
+  def create_realtionship_associations
+    realtion_model_builders.reject(&:relation_nodes_set?).each do |builder|
+      builder.create_associations @factory
     end
   end
 
-  def import_model_data(params, model_symbol)
-    config = @entity.config_of model_symbol
+  def node_model_builders
+    model_builders.select(&:model_node?)
+  end
 
-    model_class = Object.const_get model_symbol
-    instance = model_class.find_or_create params, config
-    instance.import params
+  def relation_model_builders
+    model_builders.select(&:model_relation?)
+  end
+
+  def entity_params(params)
+    return params until @entity.name?
+
+    params[@entity.name]
+  end
+
+  def import_entity_models(params)
+    @entity.managed_models.each do |model|
+      unless @factory.created? model
+        builder = @factory.create model
+        builder.new_instance params
+      end
+      builder = @factory.builder model
+      builder.import params
+    end
+  end
+
+  def import_entity_one_relations(params)
+    @entity.one_references.each do |param_name, other_entity|
+      other_params = parameter_params params, param_name
+      import_entity_relation other_entity, other_params
+    end
+  end
+
+  def import_entity_many_relations(params)
+    @entity.many_references.each do |param_name, other_entity|
+      many_entity_params = parameter_params params, param_name
+      many_entity_params.each do |entity_params|
+        import_entity_relation other_entity, entity_params
+      end
+    end
+  end
+
+  def import_entity_relation(entity, entity_params)
+    builder = ImportEntityBuilder.new entity, @factory
+    builder.import entity_params
+    create_associations
+    builder.save
+    errors.merge! builder.errors
+    builder.clear
+  end
+
+  def parameter_params(params, param_name)
+    params[param_name]
   end
 end

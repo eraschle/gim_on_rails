@@ -9,7 +9,7 @@ class ImportModelConfig
   end
 
   def add_import_parameter(import, model = nil)
-    model = import if model.blank?
+    model = import if model.nil? || model.blank?
     @mapping[import] = model
   end
 
@@ -24,8 +24,6 @@ class ImportModelConfig
   def search_parameter?
     @search_parameter != :no_search_parameter
   end
-
-  private
 
   def add_search_parameter(parameter)
     return if parameter.nil?
